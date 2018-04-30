@@ -1,8 +1,10 @@
 function [strs,tam,bins] = inicializacionPF(m,str,n)
 
+tamPalabra = 3; %% TAMAÑO PALABRA MINIMO
+
 tam = 0;
 
-for i = 1 : m - 1
+for i = tamPalabra -1 : m - 1 
     tam = tam + (strlength(str)-i);
 end
 
@@ -20,7 +22,7 @@ index = 1;
 
 str = str{1};
 
-for i = 2:m
+for i = tamPalabra:m 
     for j = 1:strlength(str) - i + 1
         strs(index) = str(j:j-1+i);
         pos(index) = index;

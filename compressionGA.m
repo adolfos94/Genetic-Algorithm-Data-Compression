@@ -4,20 +4,27 @@ clear all;
 close all;
 clc;
 tic;
-
+figure;
 % ALFABETO DE SIMBOLOS DE REEMPLAZO
 
-alphRnd = {'º','ª','\','!','1','|','"','@','"'};
+alphRnd = {'!','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<','=','>','¡','¿','?','@','[','\',']','^','_','`','{','|','}','~','¨','ç','\','ª','º','å','∫','œ','æ','€','®','†','¥','ø','π','∂','ƒ','','™','¶','§','∑','©','√','ß'};
+indxAlphRnd = 0;
+indyAlphRnd = 1;
+
+% TABLA DE RECONSTRUCCION
+
+tableRecon = {};
+
 
 %n GENERACIONES
-n = 500;
+n = 600;
 % ELEMENTOS
-nrand = 250;
+nrand = 400;
 
-A = "Hugo corre a Lugo y toma jugo torre corre rreerrepollollo perro loro coro repartir coco cosa";
+%A = "Hugo corre a Lugo y toma jugo torre corre rreerrepollollo perro loro coro repartir coco cosa";
 
-%fileID = fopen('text2.txt','r');
-%A = string(fscanf(fileID,'%c'));
+fileID = fopen('text2.txt','r');
+A = string(fscanf(fileID,'%c'));
 
 fprintf(2,"Texto Original: \n\n\t%s\n",A);
 
@@ -36,26 +43,37 @@ solG = -inf;
 solx = 0;
 
 reset = 0;
+
+arrayLengths = [];
+
 for i=1:n
     ptsy = evaluacionN(A,bins,strs,tam);
     [sol,p] = max(ptsy);
     if(sol > solG)
         solG = sol;
         solx = strs(codInvN(bins(p,:)));
-        charReplace = randseq(1);
+        
+        indxAlphRnd = (length(alphRnd)-1).*rand(1,1) + 1;
+        indyAlphRnd = (length(alphRnd)-1).*rand(1,1) + 1;
+        
+        charReplace = strcat(alphRnd(round(indxAlphRnd)),alphRnd(round(indyAlphRnd)));
         A = strrep(A,solx,charReplace)
         
-        fprintf(1,"Generación: %d, num_rep es: (%d), cadena: '%s' -> %s \n",i,solG,solx,charReplace);
+        tableRecon = [tableRecon;{solx,charReplace{1}}];
+        
+        fprintf(1,"Generación: %d, num_rep es: (%d), cadena: %s -> %s \n",i,solG,solx,charReplace{1});
         
         solG = 1; % DESCOMENTAR SI QUEREMOS TODAS LAS REPETECIONES
         
-        lengthCompressed = strlength(A);
-        
+        lengthCompressed = strlength(A) + strlength(solx) + strlength(charReplace{1});
+        arrayLengths = [arrayLengths; lengthCompressed];
+                
+        fprintf("Tamaño Original: %0.4f\nTamaño Comprimido: %0.4f\n",lengthOrg,lengthCompressed);
         fprintf("Compress Ratio: %0.4f\n",lengthOrg/lengthCompressed);
     else
         reset = reset + 1;
     end
-    if(reset >= 0)
+    if(reset >= 5)
         %reset si no cambia la solucion
         C = strsplit(A); % Separacion por palabras
         magnitude = getMagnitude(C); % Obtener magnitud
@@ -69,6 +87,10 @@ for i=1:n
     bins=mutar(bins,0.10);
 end
 
+
+plot(arrayLengths)
+reconText(A,tableRecon)
+
 timeElapsed = toc;
 fprintf('\n The time elapsed is %0.4fs\n',timeElapsed);
 
@@ -78,5 +100,13 @@ for i=1:length(C)
     if(magnitud < length(C{i}))
         magnitud = length(C{i});
     end
+end
+end
+
+
+function text = reconText(A,tableRecon)
+text = A;
+for i=length(tableRecon):-1:1
+    text = strrep(text,tableRecon{i,2},tableRecon{i,1});
 end
 end
