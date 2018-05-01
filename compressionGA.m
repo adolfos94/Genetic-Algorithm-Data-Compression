@@ -17,14 +17,14 @@ tableRecon = {};
 
 
 %n GENERACIONES
-n = 600;
+n = 500;
 % ELEMENTOS
-nrand = 400;
+nrand = 250;
 
-A = "Hugo corre a Lugo y toma jugo torre corre rreerrepollollo perro loro coro repartir coco cosa";
+%A = "Hugo corre a Lugo y toma jugo torre corre rreerrepollollo perro loro coro repartir coco cosa caza, amaca";
 
-%fileID = fopen('text2.txt','r');
-%A = string(fscanf(fileID,'%c'));
+fileID = fopen('text2.txt','r');
+A = string(fscanf(fileID,'%c'));
 
 fprintf(2,"Texto Original: \n\n\t%s\n",A);
 
@@ -37,14 +37,15 @@ magnitude = getMagnitude(C); % Obtener magnitud
 [strs,tam,bins] = inicializacionPF(magnitude,A,nrand);
 
 %Primera solucion max; si quiero minimizar.
-%-inf si quiero maximizar
+%Solucion optima de compresion: 5.
 
-solG = -inf;
+solG = 5;
 solx = 0;
 
 reset = 0;
 
 arrayLengths = [];
+tamDic = 0;
 
 for i=1:n
     ptsy = evaluacionN(A,bins,strs,tam);
@@ -63,9 +64,11 @@ for i=1:n
         
         fprintf(1,"Generación: %d, num_rep es: (%d), cadena: %s -> %s \n",i,solG,solx,charReplace{1});
         
-        solG = 1; % DESCOMENTAR SI QUEREMOS TODAS LAS REPETECIONES
+        solG = 5; % DESCOMENTAR SI QUEREMOS TODAS LAS REPETECIONES
         
-        lengthCompressed = strlength(A) + strlength(solx) + strlength(charReplace{1});
+        tamDic = tamDic + strlength(solx) + strlength(charReplace{1});
+        
+        lengthCompressed = strlength(A) + tamDic;
         arrayLengths = [arrayLengths; lengthCompressed];
                 
         fprintf("Tamaño Original: %0.4f\nTamaño Comprimido: %0.4f\n",lengthOrg,lengthCompressed);
@@ -106,7 +109,6 @@ for i=1:length(C)
     end
 end
 end
-
 
 function text = reconText(A,tableRecon)
 text = A;
