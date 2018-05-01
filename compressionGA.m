@@ -4,7 +4,7 @@ clear all;
 close all;
 clc;
 tic;
-figure;
+
 % ALFABETO DE SIMBOLOS DE REEMPLAZO
 
 alphRnd = {'!','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<','=','>','¡','¿','?','@','[','\',']','^','_','`','{','|','}','~','¨','ç','\','ª','º','å','∫','œ','æ','€','®','†','¥','ø','π','∂','ƒ','','™','¶','§','∑','©','√','ß'};
@@ -21,10 +21,10 @@ n = 600;
 % ELEMENTOS
 nrand = 400;
 
-%A = "Hugo corre a Lugo y toma jugo torre corre rreerrepollollo perro loro coro repartir coco cosa";
+A = "Hugo corre a Lugo y toma jugo torre corre rreerrepollollo perro loro coro repartir coco cosa";
 
-fileID = fopen('text2.txt','r');
-A = string(fscanf(fileID,'%c'));
+%fileID = fopen('text2.txt','r');
+%A = string(fscanf(fileID,'%c'));
 
 fprintf(2,"Texto Original: \n\n\t%s\n",A);
 
@@ -87,8 +87,12 @@ for i=1:n
     bins=mutar(bins,0.10);
 end
 
+figure;
+plot(arrayLengths);
+title('Compresión del Texto');
+xlabel('Num. de ocurrencias') % x-axis label
+ylabel('Data length') % y-axis label
 
-plot(arrayLengths)
 reconText(A,tableRecon)
 
 timeElapsed = toc;
